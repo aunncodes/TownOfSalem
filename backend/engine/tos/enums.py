@@ -25,3 +25,4 @@ class GameEventType(Enum):
     KILL = auto()
     ATTACK_BLOCKED = auto()
     TARGET_ROLEBLOCKED = auto()
+    INVESTIGATION_RESULT = auto()

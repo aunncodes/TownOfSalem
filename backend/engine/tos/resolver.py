@@ -89,7 +89,17 @@ class Resolver:
                     target=intent.target,
                     message=("Your target is suspicious or framed!" if suspicious else "You cannot find evidence of wrongdoing. Your target is innocent or great at hiding secrets!")
                 ))
+            elif intent.ability_key == "investigator":
+                if not state.is_alive(intent.actor):
+                    continue
+                target = state.require_player(intent.target)
+                events.append(GameEvent(
+                    event_type=GameEventType.INVESTIGATION_RESULT,
+                    actor=intent.actor,
+                    target=intent.target,
+                    message=target.data.investigator_result
+                ))
 
-        state.clear_night_state()
+        state.queued.clear()
 
         return events

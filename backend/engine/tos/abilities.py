@@ -45,17 +45,18 @@ class MafiosoAbility(TargetedNightAbility):
     priority = 5
     default_payload = {"power": 1}
 
-
 class SheriffAbility(TargetedNightAbility):
     key = "sheriff"
     priority = 4
-
 
 class DoctorAbility(TargetedNightAbility):
     key = "protect"
     priority = 3
     default_payload = {"defense_bonus": 1}
 
+class InvestigatorAbility(TargetedNightAbility):
+    key = "investigator"
+    priority = 4
 
 class TavernKeeperAbility(TargetedNightAbility):
     key = "roleblock"

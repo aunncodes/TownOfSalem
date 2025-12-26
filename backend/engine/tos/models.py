@@ -1,12 +1,16 @@
 class Role:
-    def __init__(self, key, name, faction, subfaction, tags, abilities):
+    def __init__(self, key, name, faction, subfaction, tags, data, abilities):
         self.key = key
         self.name = name
         self.faction = faction
         self.subfaction = subfaction
         self.tags = set(tags)
+        self.data = data
         self.abilities = list(abilities)
 
+class RoleData:
+    def __init__(self, investigator_result):
+        self.investigator_result = investigator_result
 
 class Player:
     def __init__(self, pid, name, role):
@@ -17,7 +21,6 @@ class Player:
         self.defense = 0
         self.status = set()
 
-
 class ActionIntent:
     def __init__(self, actor, ability_key, target, payload, priority):
         self.actor = actor
@@ -25,7 +28,6 @@ class ActionIntent:
         self.target = target
         self.payload = payload
         self.priority = priority
-
 
 class GameEvent:
     def __init__(self, event_type, actor, target, message="", target_message=""):
@@ -35,17 +37,12 @@ class GameEvent:
         self.message = message
         self.target_message = target_message
 
-
 class GameState:
     def __init__(self, phase, players):
         self.phase = phase
         self.players = dict(players)
 
         self.queued = []
-
-        self.visits = {}
-        self.protection_bonus = {}
-        self.roleblocked = set()
 
     def require_player(self, pid):
         if pid not in self.players:
@@ -57,9 +54,3 @@ class GameState:
 
     def queue_intent(self, intent):
         self.queued.append(intent)
-
-    def clear_night_state(self):
-        self.queued.clear()
-        self.visits.clear()
-        self.protection_bonus.clear()
-        self.roleblocked.clear()
