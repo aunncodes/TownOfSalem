@@ -33,28 +33,22 @@ class TargetedNightAbility(Ability):
         if not state.is_alive(actor):
             raise ValueError("Dead players cannot act")
 
+    def validate(self, state, actor, target):
+        self.require_living_actor(state, actor)
+        target_id = self.require_target(state, target)
+        if not state.is_alive(target_id):
+            raise ValueError("Target is dead")
+
 
 class MafiosoAbility(TargetedNightAbility):
     key = "attack"
     priority = 5
     default_payload = {"power": 1}
 
-    def validate(self, state, actor, target):
-        self.require_living_actor(state, actor)
-        target_id = self.require_target(state, target)
-        if not state.is_alive(target_id):
-            raise ValueError("Target is dead")
-
 
 class SheriffAbility(TargetedNightAbility):
     key = "sheriff"
     priority = 4
-
-    def validate(self, state, actor, target):
-        self.require_living_actor(state, actor)
-        target_id = self.require_target(state, target)
-        if not state.is_alive(target_id):
-            raise ValueError("Target is dead")
 
 
 class DoctorAbility(TargetedNightAbility):
@@ -62,23 +56,7 @@ class DoctorAbility(TargetedNightAbility):
     priority = 3
     default_payload = {"defense_bonus": 1}
 
-    def validate(self, state, actor, target):
-        self.require_living_actor(state, actor)
-        target_id = self.require_target(state, target)
-        if not state.is_alive(target_id):
-            raise ValueError("Target is dead")
-
 
 class TavernKeeperAbility(TargetedNightAbility):
     key = "roleblock"
     priority = 2
-
-    def validate(self, state, actor, target):
-        self.require_living_actor(state, actor)
-        target_id = self.require_target(state, target)
-        if not state.is_alive(target_id):
-            raise ValueError("Target is dead")
-
-        target_player = state.require_player(target_id)
-        if Tag.ROLEBLOCK_IMMUNE in target_player.role.tags:
-            raise ValueError("Target is roleblock-immune")

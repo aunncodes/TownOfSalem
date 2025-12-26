@@ -24,3 +24,4 @@ class GameEventType(Enum):
     SHERIFF_RESULT = auto()
     KILL = auto()
     ATTACK_BLOCKED = auto()
+    TARGET_ROLEBLOCKED = auto()

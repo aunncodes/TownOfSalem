@@ -17,9 +17,6 @@ class Resolver:
 
         intents = sorted(state.queued, key=lambda i: (getattr(i, "priority"), i.actor))
 
-        def actor_can_act(intent):
-            return state.is_alive(intent.actor) and (intent.actor in roleblocked)
-
         for intent in intents:
             if intent.target is None:
                 continue
@@ -27,20 +24,35 @@ class Resolver:
                 continue
 
             if intent.ability_key == "roleblock":
-                if state.is_alive(intent.target):
-                    roleblocked.add(intent.target)
-            elif intent.ability_key == "protection":
-                if not actor_can_act(intent):
-                    continue
+                target = state.require_player(intent.target)
                 if not state.is_alive(intent.actor):
+                    continue
+                if Tag.ROLEBLOCK_IMMUNE in target.role.tags:
+                    events.append(GameEvent(
+                        event_type=GameEventType.TARGET_ROLEBLOCKED,
+                        actor=intent.actor,
+                        target=intent.target,
+                        target_message="Someone tried to role block you but you are immune!"
+                    ))
+                    continue
+
+                roleblocked.add(intent.target)
+                events.append(GameEvent(
+                    event_type=GameEventType.TARGET_ROLEBLOCKED,
+                    actor=intent.actor,
+                    target=intent.target,
+                    target_message="Someone occupied your night. You were role blocked!"
+                ))
+            elif intent.ability_key == "protection":
+                if not state.is_alive(intent.actor):
+                    continue
+                target = state.require_player(intent.target)
+                if not target.alive:
                     continue
 
                 bonus = int(intent.payload.get("defense_bonus", 1))
-                protection_bonus[intent.target] = max(protection_bonus.get(intent.target, 0), bonus)
+                protection_bonus[target] = max(protection_bonus.get(target, 0), bonus)
             elif intent.ability_key == "attack":
-                if not actor_can_act(intent):
-                    continue
-
                 target = state.require_player(intent.target)
                 if not target.alive:
                     continue
@@ -54,23 +66,22 @@ class Resolver:
                         event_type=GameEventType.KILL,
                         actor=intent.actor,
                         target=intent.target,
-                        message="Your target has been killed."
+                        target_message="You were attacked by a member of the Mafia!"
                     ))
                 else:
                     events.append(GameEvent(
                         event_type=GameEventType.ATTACK_BLOCKED,
                         actor=intent.actor,
                         target=intent.target,
-                        message="Your target's defense was too strong to kill."
+                        message="Your target's defense was too strong to kill.",
+                        target_message="You were attacked by a member of the Mafia!"
                     ))
             elif intent.ability_key == "sheriff":
-                if not actor_can_act(intent):
-                    continue
                 if not state.is_alive(intent.target):
                     continue
 
                 target = state.require_player(intent.target)
-                suspicious = (target.role.faction == Faction.MAFIA and not Tag.DETECTION_IMMUNE in target.role.tags) or ("framed" in target.status)
+                suspicious = (not Tag.DETECTION_IMMUNE in target.role.tags) or ("framed" in target.status)
 
                 events.append(GameEvent(
                     event_type="SHERIFF_RESULT",

@@ -17,7 +17,7 @@ ROLE_REGISTRY = {
         name="Sheriff",
         faction=Faction.TOWN,
         subfaction=SubFaction.INVESTIGATIVE,
-        tags=[],
+        tags=[Tag.DETECTION_IMMUNE],
         abilities=[SheriffAbility()],
     ),
     "doctor": Role(
@@ -25,7 +25,7 @@ ROLE_REGISTRY = {
         name="Doctor",
         faction=Faction.TOWN,
         subfaction=SubFaction.PROTECTIVE,
-        tags=[],
+        tags=[Tag.DETECTION_IMMUNE],
         abilities=[DoctorAbility()],
     ),
     "tavernkeeper": Role(
@@ -33,7 +33,7 @@ ROLE_REGISTRY = {
         name="Tavern Keeper",
         faction=Faction.TOWN,
         subfaction=SubFaction.SUPPORT,
-        tags=[],
+        tags=[Tag.DETECTION_IMMUNE],
         abilities=[TavernKeeperAbility()],
     ),
 }

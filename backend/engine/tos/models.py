@@ -28,13 +28,12 @@ class ActionIntent:
 
 
 class GameEvent:
-    def __init__(self, event_type, actor, target, message="", public=False, data=None):
+    def __init__(self, event_type, actor, target, message="", target_message=""):
         self.type = event_type
         self.actor = actor
         self.target = target
         self.message = message
-        self.public = public
-        self.data = dict(data or {})
+        self.target_message = target_message
 
 
 class GameState:
