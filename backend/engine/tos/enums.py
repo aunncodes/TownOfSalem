@@ -18,3 +18,9 @@ class Phase(Enum):
 
 class Tag(Enum):
     ROLEBLOCK_IMMUNE = auto()
+    DETECTION_IMMUNE = auto()
+
+class GameEventType(Enum):
+    SHERIFF_RESULT = auto()
+    KILL = auto()
+    ATTACK_BLOCKED = auto()

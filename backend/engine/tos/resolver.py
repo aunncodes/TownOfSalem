@@ -1,4 +1,4 @@
-from .enums import Faction
+from .enums import Faction, GameEventType, Tag
 from .models import GameEvent
 
 
@@ -51,17 +51,17 @@ class Resolver:
                 if power > defense:
                     target.alive = False
                     events.append(GameEvent(
-                        event_type="KILL",
+                        event_type=GameEventType.KILL,
                         actor=intent.actor,
                         target=intent.target,
                         message="Your target has been killed."
                     ))
                 else:
                     events.append(GameEvent(
-                        event_type="ATTACK_BLOCKED",
+                        event_type=GameEventType.ATTACK_BLOCKED,
                         actor=intent.actor,
                         target=intent.target,
-                        message="Your target's defense was too strong!"
+                        message="Your target's defense was too strong to kill."
                     ))
             elif intent.ability_key == "sheriff":
                 if not actor_can_act(intent):
@@ -70,12 +70,13 @@ class Resolver:
                     continue
 
                 target = state.require_player(intent.target)
-                suspicious = (target.role.faction == Faction.MAFIA) or ("framed" in target.status)
+                suspicious = (target.role.faction == Faction.MAFIA and not Tag.DETECTION_IMMUNE in target.role.tags) or ("framed" in target.status)
+
                 events.append(GameEvent(
                     event_type="SHERIFF_RESULT",
                     actor=intent.actor,
                     target=intent.target,
-                    message=("Your target is suspicious.")
+                    message=("Your target is suspicious or framed!" if suspicious else "You cannot find evidence of wrongdoing. Your target is innocent or great at hiding secrets!")
                 ))
 
         state.clear_night_state()
