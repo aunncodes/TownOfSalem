@@ -1,10 +1,11 @@
 class Role:
-    def __init__(self, key, name, faction, tags=None, abilities=None):
+    def __init__(self, key, name, faction, subfaction, tags, abilities):
         self.key = key
         self.name = name
         self.faction = faction
-        self.tags = set(tags or [])
-        self.abilities = list(abilities or [])
+        self.subfaction = subfaction
+        self.tags = set(tags)
+        self.abilities = list(abilities)
 
 
 class Player:
@@ -18,11 +19,12 @@ class Player:
 
 
 class ActionIntent:
-    def __init__(self, actor, ability_key, target, payload=None):
+    def __init__(self, actor, ability_key, target, payload, priority):
         self.actor = actor
         self.ability_key = ability_key
         self.target = target
-        self.payload = dict(payload or {})
+        self.payload = payload
+        self.priority = priority
 
 
 class GameEvent:
@@ -42,7 +44,7 @@ class GameState:
 
         self.queued = []
 
-        self.visits_by_target = {}
+        self.visits = {}
         self.protection_bonus = {}
         self.roleblocked = set()
 
@@ -59,6 +61,6 @@ class GameState:
 
     def clear_night_state(self):
         self.queued.clear()
-        self.visits_by_target.clear()
+        self.visits.clear()
         self.protection_bonus.clear()
         self.roleblocked.clear()

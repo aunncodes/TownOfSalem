@@ -5,13 +5,18 @@ from .models import ActionIntent
 class Ability:
     key = ""
     phase = None
+    priority = 999
+    default_payload = {}
 
     def validate(self, state, actor, target):
         raise NotImplementedError
 
+    def build_payload(self, state, actor, target):
+        return dict(self.default_payload)
+
     def create_intent(self, state, actor, target):
         self.validate(state, actor, target)
-        return ActionIntent(actor=actor, ability_key=self.key, target=target)
+        return ActionIntent(actor=actor, ability_key=self.key, target=target, payload=self.build_payload(state, actor, target), priority=self.priority)
 
 
 class TargetedNightAbility(Ability):
@@ -29,22 +34,10 @@ class TargetedNightAbility(Ability):
             raise ValueError("Dead players cannot act")
 
 
-class AttackAbility(TargetedNightAbility):
+class MafiosoAbility(TargetedNightAbility):
     key = "attack"
-
-    def validate(self, state, actor, target):
-        self.require_living_actor(state, actor)
-        target_id = self.require_target(state, target)
-        if not state.is_alive(target_id):
-            raise ValueError("Target is dead")
-
-    def create_intent(self, state, actor, target):
-        self.validate(state, actor, target)
-        return ActionIntent(actor=actor, ability_key=self.key, target=target, payload={"power": 1})
-
-
-class InvestigateAbility(TargetedNightAbility):
-    key = "investigate"
+    priority = 5
+    default_payload = {"power": 1}
 
     def validate(self, state, actor, target):
         self.require_living_actor(state, actor)
@@ -53,8 +46,21 @@ class InvestigateAbility(TargetedNightAbility):
             raise ValueError("Target is dead")
 
 
-class ProtectAbility(TargetedNightAbility):
+class SheriffAbility(TargetedNightAbility):
+    key = "sheriff"
+    priority = 4
+
+    def validate(self, state, actor, target):
+        self.require_living_actor(state, actor)
+        target_id = self.require_target(state, target)
+        if not state.is_alive(target_id):
+            raise ValueError("Target is dead")
+
+
+class DoctorAbility(TargetedNightAbility):
     key = "protect"
+    priority = 3
+    default_payload = {"defense_bonus": 1}
 
     def validate(self, state, actor, target):
         self.require_living_actor(state, actor)
@@ -62,13 +68,10 @@ class ProtectAbility(TargetedNightAbility):
         if not state.is_alive(target_id):
             raise ValueError("Target is dead")
 
-    def create_intent(self, state, actor, target):
-        self.validate(state, actor, target)
-        return ActionIntent(actor=actor, ability_key=self.key, target=target, payload={"defense_bonus": 1})
 
-
-class RoleblockAbility(TargetedNightAbility):
+class TavernKeeperAbility(TargetedNightAbility):
     key = "roleblock"
+    priority = 2
 
     def validate(self, state, actor, target):
         self.require_living_actor(state, actor)

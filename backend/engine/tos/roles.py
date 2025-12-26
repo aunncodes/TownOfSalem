@@ -1,5 +1,5 @@
-from .abilities import AttackAbility, InvestigateAbility, ProtectAbility, RoleblockAbility
-from .enums import Faction, Tag
+from .abilities import MafiosoAbility, SheriffAbility, DoctorAbility, TavernKeeperAbility
+from .enums import Faction, Tag, SubFaction
 from .models import Role
 
 
@@ -8,28 +8,32 @@ ROLE_REGISTRY = {
         key="mafioso",
         name="Mafioso",
         faction=Faction.MAFIA,
-        tags=[Tag.KILLING],
-        abilities=[AttackAbility()],
+        subfaction=SubFaction.KILLING,
+        tags=[],
+        abilities=[MafiosoAbility()],
     ),
     "sheriff": Role(
         key="sheriff",
         name="Sheriff",
         faction=Faction.TOWN,
-        tags=[Tag.INVESTIGATIVE],
-        abilities=[InvestigateAbility()],
+        subfaction=SubFaction.INVESTIGATIVE,
+        tags=[],
+        abilities=[SheriffAbility()],
     ),
     "doctor": Role(
         key="doctor",
         name="Doctor",
         faction=Faction.TOWN,
-        tags=[Tag.PROTECTIVE],
-        abilities=[ProtectAbility()],
+        subfaction=SubFaction.PROTECTIVE,
+        tags=[],
+        abilities=[DoctorAbility()],
     ),
     "tavernkeeper": Role(
         key="tavernkeeper",
         name="Tavern Keeper",
         faction=Faction.TOWN,
+        subfaction=SubFaction.SUPPORT,
         tags=[],
-        abilities=[RoleblockAbility()],
+        abilities=[TavernKeeperAbility()],
     ),
 }

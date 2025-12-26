@@ -6,14 +6,15 @@ class Faction(Enum):
     MAFIA = auto()
     NEUTRAL = auto()
 
+class SubFaction(Enum):
+    KILLING = auto()
+    INVESTIGATIVE = auto()
+    PROTECTIVE = auto()
+    SUPPORT = auto()
 
 class Phase(Enum):
     DAY = auto()
     NIGHT = auto()
 
-
 class Tag(Enum):
-    KILLING = auto()
-    INVESTIGATIVE = auto()
-    PROTECTIVE = auto()
     ROLEBLOCK_IMMUNE = auto()
