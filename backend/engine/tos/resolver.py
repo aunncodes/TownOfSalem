@@ -11,12 +11,7 @@ class Resolver:
     def resolve_night(self, state):
         ctx = NightContext()
 
-        for intent in state.queued:
-            if intent.target is None:
-                continue
-            ctx.add_visit(intent.actor, intent.target)
-
-        intents = sorted(state.queued, key=lambda i: (getattr(i, "priority"), i.actor))
+        intents = sorted(state.queued, key=lambda i: (getattr(i, "priority", 999), int(i.actor)))
 
         for intent in intents:
             if intent.target is None:

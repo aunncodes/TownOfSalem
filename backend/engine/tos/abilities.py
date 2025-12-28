@@ -1,4 +1,4 @@
-from .enums import Phase, Tag, GameEventType
+from .enums import Phase, Tag, GameEventType, Status
 from .models import ActionIntent, NightContext, GameEvent
 
 
@@ -10,7 +10,7 @@ class Ability:
     requires_target = True
     requires_living_actor = True
     requires_living_target = True
-    blocked_by_roleblock = True
+    causes_visit = True
 
     def validate(self, state, actor, target):
         raise NotImplementedError
@@ -27,13 +27,15 @@ class Ability:
             return
         if self.requires_living_actor and not state.is_alive(intent.actor):
             return
-        if self.blocked_by_roleblock and ctx.is_roleblocked(intent.actor):
+        if ctx.is_roleblocked(intent.actor):
             return
         if self.requires_living_target:
             if intent.target is None:
                 return
             if not state.is_alive(intent.target):
                 return
+        if self.causes_visit and intent.target is not None:
+            ctx.add_visit(intent.actor, intent.target)
 
         self.apply(state, intent, ctx)
 
@@ -95,7 +97,7 @@ class SheriffAbility(TargetedNightAbility):
 
     def apply(self, state, intent, ctx):
         target = state.require_player(intent.target)
-        suspicious = (Tag.DETECTION_IMMUNE not in target.role.tags) or ("framed" in target.status)
+        suspicious = (Tag.DETECTION_IMMUNE not in target.role.tags) or (Status.FRAMED in target.status)
 
         ctx.add_event(GameEvent(
             event_type=GameEventType.SHERIFF_RESULT,
@@ -135,7 +137,7 @@ class TavernKeeperAbility(TargetedNightAbility):
             ctx.add_event(GameEvent(
                 event_type=GameEventType.TARGET_ROLEBLOCKED,
                 actor=intent.actor,
-                target=target,
+                target=intent.target,
                 target_message="Someone tried to role block you but you are immune!"
             ))
             return
@@ -144,6 +146,6 @@ class TavernKeeperAbility(TargetedNightAbility):
         ctx.add_event(GameEvent(
             event_type=GameEventType.TARGET_ROLEBLOCKED,
             actor=intent.actor,
-            target=target,
+            target=intent.target,
             target_message="Someone occupied your night. You were role blocked!"
         ))
