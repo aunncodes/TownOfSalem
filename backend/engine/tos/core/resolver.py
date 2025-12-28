@@ -1,4 +1,4 @@
-from backend.engine.tos.models import NightContext
+from backend.engine.tos.models.night_context import NightContext
 
 
 class Resolver:

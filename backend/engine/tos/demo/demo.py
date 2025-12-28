@@ -1,8 +1,11 @@
-from backend.engine.tos.abilities import SheriffAbility, MafiosoAbility, DoctorAbility
-from backend.engine.tos.enums import Phase
-from backend.engine.tos.models import GameState, Player
-from backend.engine.tos.resolver import Resolver
-from backend.engine.tos.roles import ROLE_REGISTRY
+from backend.engine.tos.abilities.doctor import DoctorAbility
+from backend.engine.tos.abilities.mafioso import MafiosoAbility
+from backend.engine.tos.abilities.sheriff import SheriffAbility
+from backend.engine.tos.core.resolver import Resolver
+from backend.engine.tos.enums.phase import Phase
+from backend.engine.tos.models.events import GameState
+from backend.engine.tos.models.player import Player
+from backend.engine.tos.registry.role_registry import ROLE_REGISTRY
 
 
 def main():
