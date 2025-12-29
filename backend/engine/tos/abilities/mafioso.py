@@ -12,9 +12,10 @@ class MafiosoAbility(TargetedNightAbility):
         target = state.require_player(intent.target)
 
         power = int(intent.payload.get("power", 1))
-        defense = max(target.defense, ctx.get_protection_bonus(intent.target))
+        defense = target.defense
+        protection_bonus = ctx.get_protection_bonus(intent.target)
 
-        if power > defense:
+        if power > defense or power > protection_bonus:
             target.alive = False
             ctx.add_event(GameEvent(
                 event_type=GameEventType.KILL,
@@ -23,10 +24,19 @@ class MafiosoAbility(TargetedNightAbility):
                 target_message="You were attacked by a member of the Mafia!"
             ))
         else:
-            ctx.add_event(GameEvent(
-                event_type=GameEventType.ATTACK_BLOCKED,
-                actor=intent.actor,
-                target=intent.target,
-                message="Your target's defense was too strong to kill.",
-                target_message="Someone attacked you but your defense was too strong!" # TODO: should detect if protection was the reason, too lazy to do that rn
-            ))
+            if power > defense:
+                ctx.add_event(GameEvent(
+                    event_type=GameEventType.ATTACK_BLOCKED,
+                    actor=intent.actor,
+                    target=intent.target,
+                    message="Your target's defense was too strong to kill.",
+                    target_message="Someone attacked you but your defense was too strong!"
+                ))
+            else:
+                ctx.add_event(GameEvent(
+                    event_type=GameEventType.ATTACK_BLOCKED,
+                    actor=intent.actor,
+                    target=intent.target,
+                    message="Your target's defense was too strong to kill.",
+                    target_message="You were attacked but someone nursed you back to health!" # TODO: if i add bodyguard, it will need its own flag
+                ))
