@@ -15,7 +15,7 @@ class MafiosoAbility(TargetedNightAbility):
         defense = target.defense
         protection_bonus = ctx.get_protection_bonus(intent.target)
 
-        if power > defense or power > protection_bonus:
+        if power > defense and power > protection_bonus:
             target.alive = False
             ctx.add_event(GameEvent(
                 event_type=GameEventType.KILL,
