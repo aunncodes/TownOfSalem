@@ -1,11 +1,14 @@
+from backend.engine.tos.models.player import Player
+
+
 class GameState:
-    def __init__(self, phase, players):
+    def __init__(self, phase, players: dict[int, Player]):
         self.phase = phase
         self.players = dict(players)
 
         self.queued = []
 
-    def require_player(self, pid):
+    def require_player(self, pid) -> Player:
         if pid not in self.players:
             raise ValueError("Unknown player id: " + str(pid))
         return self.players[pid]
