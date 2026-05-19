@@ -16,7 +16,7 @@ class JailorDayAbility(TargetedDayAbility):
             event_type=GameEventType.JAIL_SELECTED,
             actor=intent.actor,
             target=target.id,
-            messages={intent.actor: f"You have decided to jail {target.name} tonight."}
+            messages={intent.actor: f"You dragged your target off to jail!", intent.target: "You were hauled off to jail!"}
         ))
 
 

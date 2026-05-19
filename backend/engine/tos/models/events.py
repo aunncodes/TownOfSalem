@@ -19,6 +19,9 @@ class GameState:
     def queue_intent(self, intent):
         self.queued.append(intent)
 
+    def clear_queue(self):
+        self.queued = []
+
 class GameEvent:
     def __init__(self, event_type, actor, target, messages: dict[int, str]):
         self.type = event_type

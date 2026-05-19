@@ -103,6 +103,9 @@ class TargetedNightAbility(NightAbility):
         if not state.is_alive(target_id):
             raise ValueError("Target is dead")
 
+    def resolve_intent(self, state, intent, ctx: NightContext):
+        super().resolve_intent(state, intent, ctx)
+
 class TargetedDayAbility(Ability):
     phase = Phase.DAY
 

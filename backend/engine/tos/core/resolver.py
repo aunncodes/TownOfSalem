@@ -14,7 +14,9 @@ class Resolver:
 
     def resolve_day(self, state):
         ctx = DayContext()
+
         intents = sorted(state.queued, key=lambda i: (getattr(i, "priority", 999), int(i.actor)))
+
         for intent in intents:
             if intent.target is None:
                 continue
