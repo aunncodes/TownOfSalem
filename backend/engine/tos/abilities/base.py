@@ -49,7 +49,6 @@ class Ability:
     def apply(self, state, intent, ctx):
         return
 
-
 class NightAbility(Ability):
     phase = Phase.NIGHT
 
@@ -59,23 +58,32 @@ class NightAbility(Ability):
     def resolve_intent(self, state, intent, ctx: NightContext):
         if self.requires_target and intent.target is None:
             return
+
         if self.requires_living_actor and not state.is_alive(intent.actor):
             return
+
+        if ctx.is_jailed(intent.actor):
+            return
+
         if self.can_be_roleblocked and ctx.is_roleblocked(intent.actor):
             return
+
         if self.requires_living_target:
             if intent.target is None:
                 return
             if not state.is_alive(intent.target):
                 return
+
+        if intent.target is not None and ctx.is_jailed(intent.target):
+            jailor_id = ctx.get_jailor_for(intent.target)
+
+            if intent.actor != jailor_id:
+                return
+
         if self.causes_visit and intent.target is not None:
             ctx.add_visit(intent.actor, intent.target)
 
         self.apply(state, intent, ctx)
-
-    def apply(self, state, intent, ctx: NightContext):
-        return
-
 
 class TargetedNightAbility(NightAbility):
     def require_target(self, state, target):
