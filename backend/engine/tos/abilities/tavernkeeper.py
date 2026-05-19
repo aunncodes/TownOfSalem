@@ -16,7 +16,7 @@ class TavernKeeperAbility(TargetedNightAbility):
                 event_type=GameEventType.TARGET_ROLEBLOCKED,
                 actor=intent.actor,
                 target=intent.target,
-                target_message="Someone tried to role block you but you are immune!"
+                messages={intent.target: "Someone tried to role block you but you are immune!"}
             ))
             return
 
@@ -25,5 +25,5 @@ class TavernKeeperAbility(TargetedNightAbility):
             event_type=GameEventType.TARGET_ROLEBLOCKED,
             actor=intent.actor,
             target=intent.target,
-            target_message="Someone occupied your night. You were role blocked!"
+            messages={intent.target: "Someone occupied your night. You were role blocked!"}
         ))

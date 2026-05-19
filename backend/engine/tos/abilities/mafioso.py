@@ -21,7 +21,7 @@ class MafiosoAbility(TargetedNightAbility):
                 event_type=GameEventType.KILL,
                 actor=intent.actor,
                 target=intent.target,
-                target_message="You were attacked by a member of the Mafia!"
+                messages={intent.target: "You were attacked by a member of the Mafia!"}
             ))
         else:
             if power > defense:
@@ -29,14 +29,12 @@ class MafiosoAbility(TargetedNightAbility):
                     event_type=GameEventType.ATTACK_BLOCKED,
                     actor=intent.actor,
                     target=intent.target,
-                    message="Your target's defense was too strong to kill.",
-                    target_message="Someone attacked you but your defense was too strong!"
+                    messages={intent.actor: "Your target's defense was too strong to kill.", intent.target: "Someone attacked you but your defense was too strong!"}
                 ))
             else:
                 ctx.add_event(GameEvent(
                     event_type=GameEventType.ATTACK_BLOCKED,
                     actor=intent.actor,
                     target=intent.target,
-                    message="Your target's defense was too strong to kill.",
-                    target_message="You were attacked but someone nursed you back to health!" # TODO: if i add bodyguard, it will need its own flag
+                    messages={intent.actor: "Your target's defense was too strong to kill.", intent.target: "You were attacked but someone nursed you back to health!"} # TODO: if i add bodyguard, it will need its own flag
                 ))

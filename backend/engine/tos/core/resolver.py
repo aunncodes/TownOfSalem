@@ -1,9 +1,10 @@
+from backend.engine.tos.abilities.base import Ability
 from backend.engine.tos.models.night_context import NightContext
 
 
 class Resolver:
     def __init__(self, role_registry):
-        self.abilities = {}
+        self.abilities: dict[str, Ability] = {}
         for role in role_registry.values():
             for ability in role.abilities:
                 self.abilities[ability.key] = ability

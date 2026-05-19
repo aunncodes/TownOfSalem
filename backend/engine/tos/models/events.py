@@ -20,9 +20,8 @@ class GameState:
         self.queued.append(intent)
 
 class GameEvent:
-    def __init__(self, event_type, actor, target, message="", target_message=""):
+    def __init__(self, event_type, actor, target, messages: dict[int, str]):
         self.type = event_type
         self.actor = actor
         self.target = target
-        self.message = message
-        self.target_message = target_message
+        self.messages = messages

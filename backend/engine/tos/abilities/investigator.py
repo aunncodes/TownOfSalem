@@ -14,5 +14,5 @@ class InvestigatorAbility(TargetedNightAbility):
             event_type=GameEventType.INVESTIGATION_RESULT,
             actor=intent.actor,
             target=intent.target,
-            message=target.role.data.investigator_result
+            messages={intent.actor: target.role.data.investigator_result}
         ))
