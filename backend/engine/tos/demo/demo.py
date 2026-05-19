@@ -36,7 +36,7 @@ def main():
 
     print("Night Events")
     for e in events:
-        print(f"- {e.type.name}: actor={e.actor}, target={e.target}, msg={e.message!r}, target_msg={e.target_message!r}")
+        print(f"- {e.type.name}: actor={e.actor}, target={e.target}, messages={e.messages!r}")
 
     print("Alive")
     for pid, p in state.players.items():
