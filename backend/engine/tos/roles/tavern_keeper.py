@@ -11,7 +11,7 @@ class TavernKeeperRole(Role):
         name="Tavern Keeper",
         faction=Faction.TOWN,
         subfaction=SubFaction.SUPPORT,
-        tags=[Tag.DETECTION_IMMUNE],
+        tags=[Tag.DETECTION_IMMUNE, Tag.ROLEBLOCK_IMMUNE],
         data=RoleData("Your target could be an Tavern Keeper, Transporter, Bootlegger, or Hypnotist."),
         abilities=[TavernKeeperAbility()],
     )
