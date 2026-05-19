@@ -3,10 +3,10 @@ from backend.engine.tos.models.night_context import NightContext
 
 class Resolver:
     def __init__(self, role_registry):
-        self.ability_by_key = {}
+        self.abilities = {}
         for role in role_registry.values():
             for ability in role.abilities:
-                self.ability_by_key[ability.key] = ability
+                self.abilities[ability.key] = ability
 
     def resolve_night(self, state):
         ctx = NightContext()
@@ -19,7 +19,7 @@ class Resolver:
             if not state.is_alive(intent.actor):
                 continue
 
-            ability = self.ability_by_key.get(intent.ability_key)
+            ability = self.abilities.get(intent.ability_key)
             if ability is None:
                 continue
 
