@@ -62,3 +62,23 @@ class TargetedNightAbility(Ability):
         target_id = self.require_target(state, target)
         if not state.is_alive(target_id):
             raise ValueError("Target is dead")
+
+class TargetedDayAbility(Ability):
+    phase = Phase.DAY
+
+    def require_target(self, state, target):
+        if target is None:
+            raise ValueError("Target required")
+        state.require_player(target)
+        return target
+
+    def require_living_actor(self, state, actor):
+        state.require_player(actor)
+        if not state.is_alive(actor):
+            raise ValueError("Dead players cannot act")
+
+    def validate(self, state, actor, target):
+        self.require_living_actor(state, actor)
+        target_id = self.require_target(state, target)
+        if not state.is_alive(target_id):
+            raise ValueError("Target is dead")
