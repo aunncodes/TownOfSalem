@@ -1,5 +1,6 @@
 from backend.engine.tos.core.resolver import Resolver
 from backend.engine.tos.enums.phase import Phase
+from backend.engine.tos.enums.status import Status
 from backend.engine.tos.models.action import ActionChoice
 from backend.engine.tos.models.events import GameState
 from backend.engine.tos.models.player import Player
@@ -59,6 +60,9 @@ class GameManager:
         for ability in player.role.abilities:
             if ability.phase != state.phase:
                 continue
+            if Status.JAILED in player.status: # TODO: Add Logic for roles that can use their ability when jailed, some sort of passive ability type maybe?
+                continue
+            # TODO: implement function for abilities so that they can themselves check if they are valid to run in the current state, to solve above
 
             choices.append(ActionChoice(
                 name=ability.key,
@@ -75,7 +79,7 @@ class GameManager:
         player = state.require_player(actor)
 
         for ability in player.role.abilities:
-            if ability.name != ability_key:
+            if ability.key != ability_key:
                 continue
 
             if ability.phase != state.phase:
