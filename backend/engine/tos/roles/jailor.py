@@ -13,5 +13,5 @@ class JailorRole(Role):
         subfaction=SubFaction.KILLING,
         tags=[Tag.DETECTION_IMMUNE],
         data=RoleData("Your target could be a Spy, Blackmailer, or Jailor."),
-        abilities=[JailorDayAbility(), JailorExecuteAbility],
+        abilities=[JailorDayAbility(), JailorExecuteAbility()],
     )

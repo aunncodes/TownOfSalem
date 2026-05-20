@@ -1,5 +1,3 @@
-from calendar import Day
-
 from backend.engine.tos.abilities.base import Ability
 from backend.engine.tos.models.day_context import DayContext
 from backend.engine.tos.models.night_context import NightContext
