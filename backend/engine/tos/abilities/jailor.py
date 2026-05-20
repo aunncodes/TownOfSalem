@@ -1,5 +1,6 @@
 from backend.engine.tos.abilities.base import TargetedDayAbility, TargetedNightAbility
 from backend.engine.tos.enums.game_event import GameEventType
+from backend.engine.tos.enums.status import Status
 from backend.engine.tos.models.events import GameEvent
 
 
@@ -10,7 +11,7 @@ class JailorDayAbility(TargetedDayAbility):
     def apply(self, state, intent, ctx):
         target = state.require_player(intent.target)
 
-        ctx.select_jail_target(intent.actor, target.id)
+        target.status.add(Status.JAILED)
 
         ctx.add_event(GameEvent(
             event_type=GameEventType.JAIL_SELECTED,
@@ -35,9 +36,7 @@ class JailorExecuteAbility(TargetedNightAbility):
     def apply(self, state, intent, ctx):
         target = state.require_player(intent.target)
 
-        jailed_target = ctx.get_jailed_target_for(intent.actor)
-
-        if jailed_target != intent.target:
+        if Status.JAILED not in target.status:
             return
 
         target.alive = False

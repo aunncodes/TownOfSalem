@@ -1,6 +1,10 @@
+from backend.engine.tos.enums.game_event import GameEventType
 from backend.engine.tos.enums.phase import Phase
+from backend.engine.tos.enums.status import Status
+from backend.engine.tos.enums.tag import Tag
 from backend.engine.tos.models.action_intent import ActionIntent
 from backend.engine.tos.models.day_context import DayContext
+from backend.engine.tos.models.events import GameEvent
 from backend.engine.tos.models.night_context import NightContext
 
 
@@ -62,7 +66,7 @@ class NightAbility(Ability):
         if self.requires_living_actor and not state.is_alive(intent.actor):
             return
 
-        if ctx.is_jailed(intent.actor):
+        if Status.JAILED in state.require_player(intent.actor).status:
             return
 
         if self.can_be_roleblocked and ctx.is_roleblocked(intent.actor):
@@ -74,11 +78,14 @@ class NightAbility(Ability):
             if not state.is_alive(intent.target):
                 return
 
-        if intent.target is not None and ctx.is_jailed(intent.target):
-            jailor_id = ctx.get_jailor_for(intent.target)
-
-            if intent.actor != jailor_id:
-                return
+        if Status.JAILED in state.require_player(intent.target).status and Tag.JAILED_IMMUNE not in state.require_player(intent.actor).role.tags: # TODO: Fix not checking if this is the correlating Jailor
+            ctx.add_event(GameEvent(
+                event_type=GameEventType.TARGET_JAILED,
+                actor=intent.actor,
+                target=intent.target,
+                messages={intent.actor: "Your ability failed because your target was in jail."}
+            ))
+            return
 
         if self.causes_visit and intent.target is not None:
             ctx.add_visit(intent.actor, intent.target)

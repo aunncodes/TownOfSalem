@@ -7,3 +7,5 @@ class GameEventType(Enum):
     TARGET_ROLEBLOCKED = auto()
     INVESTIGATION_RESULT = auto()
     JAIL_SELECTED = auto()
+    TARGET_JAILED = auto()
+    TARGET_PROTECTED = auto()

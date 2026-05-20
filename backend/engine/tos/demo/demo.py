@@ -36,6 +36,9 @@ def main():
     for e in events:
         print(f"{e.type.name}: actor={e.actor}, target={e.target}, messages={e.messages!r}")
 
+    print("Player Status")
+    for pid, p in state.players.items():
+        print(f"{pid} ({p.name} - {p.role.key}): {p.status!r}")
     state.clear_queue()
     state.phase = Phase.NIGHT
 

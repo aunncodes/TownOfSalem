@@ -11,7 +11,7 @@ class JailorRole(Role):
         name="Joctor",
         faction=Faction.TOWN,
         subfaction=SubFaction.KILLING,
-        tags=[Tag.DETECTION_IMMUNE],
+        tags=[Tag.DETECTION_IMMUNE, Tag.JAILED_IMMUNE],
         data=RoleData("Your target could be a Spy, Blackmailer, or Jailor."),
         abilities=[JailorDayAbility(), JailorExecuteAbility()],
     )

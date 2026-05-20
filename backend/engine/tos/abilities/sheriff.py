@@ -17,5 +17,5 @@ class SheriffAbility(TargetedNightAbility):
             event_type=GameEventType.SHERIFF_RESULT,
             actor=intent.actor,
             target=intent.target,
-            messages={intent.target: ("Your target is suspicious or framed!" if suspicious else "You cannot find evidence of wrongdoing. Your target is innocent or great at hiding secrets!")}
+            messages={intent.actor: ("Your target is suspicious or framed!" if suspicious else "You cannot find evidence of wrongdoing. Your target is innocent or great at hiding secrets!")}
         ))
