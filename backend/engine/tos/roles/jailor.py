@@ -8,7 +8,7 @@ class JailorRole(Role):
     def __init__(self):
         super().__init__(
         key="jailor",
-        name="Joctor",
+        name="Jailor",
         faction=Faction.TOWN,
         subfaction=SubFaction.KILLING,
         tags=[Tag.DETECTION_IMMUNE, Tag.JAILED_IMMUNE],
