@@ -23,7 +23,7 @@ class GameState:
         self.queued = []
 
 class GameEvent:
-    def __init__(self, event_type, actor, target, messages: dict[int, str]):
+    def __init__(self, event_type, actor: int, messages: dict[int, str], target=None):
         self.type = event_type
         self.actor = actor
         self.target = target

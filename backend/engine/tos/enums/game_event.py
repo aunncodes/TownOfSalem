@@ -9,3 +9,5 @@ class GameEventType(Enum):
     JAIL_SELECTED = auto()
     TARGET_JAILED = auto()
     TARGET_PROTECTED = auto()
+    VETERAN_ALERTED = auto()
+    VETERAN_SHOT = auto()

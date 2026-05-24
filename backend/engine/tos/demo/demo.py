@@ -29,7 +29,7 @@ def choose(title, values):
 
 def choose_role():
     role_items = list(ROLE_REGISTRY.items())
-    roles = [role.name for _, role in role_items]
+    roles = [role().name for _, role in role_items]
 
     role = choose("Choose role:", roles)
 

@@ -17,21 +17,13 @@ class JailorDayAbility(TargetedDayAbility):
             event_type=GameEventType.JAIL_SELECTED,
             actor=intent.actor,
             target=target.id,
-            messages={intent.actor: f"You dragged your target off to jail!", intent.target: "You were hauled off to jail!"}
+            messages={intent.actor: "You dragged your target off to jail!", intent.target: "You were hauled off to jail!"}
         ))
 
 
 class JailorExecuteAbility(TargetedNightAbility):
     key = "execute"
     priority = 3
-    payload = {"power": 3}
-
-    def validate(self, state, actor, target):
-        self.require_living_actor(state, actor)
-        target_id = self.require_target(state, target)
-
-        if not state.is_alive(target_id):
-            raise ValueError("Target is dead")
 
     def apply(self, state, intent, ctx):
         target = state.require_player(intent.target)
@@ -39,7 +31,9 @@ class JailorExecuteAbility(TargetedNightAbility):
         if Status.JAILED not in target.status:
             return
 
-        target.alive = False
+        defense = max(target.defense, ctx.get_protection_bonus(intent.target))
+        if defense < 3:
+            target.alive = False
 
         ctx.add_event(GameEvent(
             event_type=GameEventType.KILL,

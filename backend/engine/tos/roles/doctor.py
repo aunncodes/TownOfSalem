@@ -7,11 +7,11 @@ from backend.engine.tos.models.role import Role, RoleData
 class DoctorRole(Role):
     def __init__(self):
         super().__init__(
-        key="doctor",
-        name="Doctor",
-        faction=Faction.TOWN,
-        subfaction=SubFaction.PROTECTIVE,
-        tags=[Tag.DETECTION_IMMUNE],
-        data=RoleData("Your target could be a Doctor, Disguiser, or Serial Killer."),
-        abilities=[DoctorAbility()],
-    )
+            key="doctor",
+            name="Doctor",
+            faction=Faction.TOWN,
+            subfaction=SubFaction.PROTECTIVE,
+            tags=[Tag.DETECTION_IMMUNE],
+            data=RoleData("Your target could be a Doctor, Disguiser, or Serial Killer."),
+            abilities=[DoctorAbility()],
+        )

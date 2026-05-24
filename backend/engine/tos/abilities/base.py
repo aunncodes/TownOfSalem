@@ -12,26 +12,16 @@ class Ability:
     key = ""
     phase = None
     priority = 999
-    payload = {}
-    requires_target = True
-    requires_living_actor = True
-    requires_living_target = True
-    causes_visit = True
-
-    def validate(self, state, actor, target):
-        raise NotImplementedError
-
-    def build_payload(self, state, actor, target):
-        return dict(self.payload)
+    requires_target = False
+    requires_living_actor = False
+    requires_living_target = False
+    causes_visit = False
 
     def create_intent(self, state, actor, target):
-        self.validate(state, actor, target)
-
         return ActionIntent(
             actor=actor,
             ability_key=self.key,
             target=target,
-            payload=self.build_payload(state, actor, target),
             priority=self.priority,
         )
 
@@ -51,13 +41,15 @@ class Ability:
         self.apply(state, intent, ctx)
 
     def apply(self, state, intent, ctx):
-        return
+        raise NotImplementedError()
 
 class NightAbility(Ability):
     phase = Phase.NIGHT
 
-    causes_visit = True
-    can_be_roleblocked = True
+    requires_target = False
+    requires_living_actor = True
+    requires_living_target = False
+    causes_visit = False
 
     def resolve_intent(self, state, intent, ctx: NightContext):
         if self.requires_target and intent.target is None:
@@ -69,7 +61,7 @@ class NightAbility(Ability):
         if Status.JAILED in state.require_player(intent.actor).status:
             return
 
-        if self.can_be_roleblocked and ctx.is_roleblocked(intent.actor):
+        if Status.ROLEBLOCKED in state.require_player(intent.actor).status:
             return
 
         if self.requires_living_target:
@@ -78,7 +70,7 @@ class NightAbility(Ability):
             if not state.is_alive(intent.target):
                 return
 
-        if Status.JAILED in state.require_player(intent.target).status and Tag.JAILED_IMMUNE not in state.require_player(intent.actor).role.tags: # TODO: Fix not checking if this is the correlating Jailor
+        if intent.target is not None and Status.JAILED in state.require_player(intent.target).status and Tag.JAILED_IMMUNE not in state.require_player(intent.actor).role.tags: # TODO: Fix not checking if this is the correlating Jailor
             ctx.add_event(GameEvent(
                 event_type=GameEventType.TARGET_JAILED,
                 actor=intent.actor,
@@ -87,54 +79,33 @@ class NightAbility(Ability):
             ))
             return
 
+        if intent.target is not None and Status.ALERT in state.require_player(intent.target).status:
+            ctx.add_event(GameEvent(
+                event_type=GameEventType.VETERAN_SHOT,
+                actor=intent.target,
+                target=intent.actor,
+                messages={intent.target: "You shot someone who visited you last night!", intent.actor: "You were shot by the Veteran you visited!"}
+            ))
+            defense = max(state.require_player(intent.actor).defense, ctx.get_protection_bonus(intent.actor))
+            if defense < 2:
+                state.require_player(intent.actor).alive = False # Doesn't return since ability actually still happens
+
         if self.causes_visit and intent.target is not None:
             ctx.add_visit(intent.actor, intent.target)
 
         self.apply(state, intent, ctx)
 
 class TargetedNightAbility(NightAbility):
-    def require_target(self, state, target):
-        if target is None:
-            raise ValueError("Target required")
-        state.require_player(target)
-        return target
-
-    def require_living_actor(self, state, actor):
-        state.require_player(actor)
-        if not state.is_alive(actor):
-            raise ValueError("Dead players cannot act")
-
-    def validate(self, state, actor, target):
-        self.require_living_actor(state, actor)
-        target_id = self.require_target(state, target)
-        if not state.is_alive(target_id):
-            raise ValueError("Target is dead")
-
-    def resolve_intent(self, state, intent, ctx: NightContext):
-        super().resolve_intent(state, intent, ctx)
+    requires_target = True
+    requires_living_actor = True
+    requires_living_target = True
+    causes_visit = True
 
 class TargetedDayAbility(Ability):
+    requires_target = True
+    requires_living_actor = True
+    requires_living_target = True
     phase = Phase.DAY
 
-    def require_target(self, state, target):
-        if target is None:
-            raise ValueError("Target required")
-        state.require_player(target)
-        return target
-
-    def require_living_actor(self, state, actor):
-        state.require_player(actor)
-        if not state.is_alive(actor):
-            raise ValueError("Dead players cannot act")
-
-    def validate(self, state, actor, target):
-        self.require_living_actor(state, actor)
-        target_id = self.require_target(state, target)
-        if not state.is_alive(target_id):
-            raise ValueError("Target is dead")
-
-    def resolve_intent(self, state, intent, ctx: DayContext):
-        return super().resolve_intent(state, intent, ctx)
-
     def apply(self, state, intent, ctx: DayContext):
-        return
+        raise NotImplementedError()

@@ -10,7 +10,7 @@ from backend.engine.tos.registry.role_registry import ROLE_REGISTRY
 class GameManager:
     def __init__(self, role_registry=ROLE_REGISTRY):
         self.role_registry = role_registry
-        self.resolver = Resolver(role_registry)
+        self.resolver = Resolver()
         self.state = None
 
     def create_game(self, players):
@@ -20,7 +20,7 @@ class GameManager:
                 pid: Player(
                     pid=pid,
                     name=data["name"],
-                    role=self.role_registry[data["role"]],
+                    role=self.role_registry[data["role"]](),
                 )
                 for pid, data in players.items()
             }
@@ -105,6 +105,10 @@ class GameManager:
     def advance_phase(self):
         state = self.require_state()
         state.clear_queue()
+        if state.phase == Phase.NIGHT: # Currently just clear all statuses when night ends, might need to be changed so all statuses have set times, such as framed
+            players = self.get_alive_players()
+            for player in players.values():
+                player.status = set()
 
         state.phase = Phase.DAY if state.phase == Phase.NIGHT else Phase.NIGHT
 
@@ -130,4 +134,4 @@ class GameManager:
         for player in alive_players.values():
             return player.role.faction
 
-        return ValueError("If this ever runs, I commend you")
+        raise ValueError("This should never run")

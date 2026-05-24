@@ -6,12 +6,11 @@ from backend.engine.tos.models.events import GameEvent
 class MafiosoAbility(TargetedNightAbility):
     key = "attack"
     priority = 5
-    payload = {"power": 1}
 
     def apply(self, state, intent, ctx):
         target = state.require_player(intent.target)
 
-        power = int(intent.payload.get("power", 1))
+        power = 1
         defense = target.defense
         protection_bonus = ctx.get_protection_bonus(intent.target)
 
@@ -24,12 +23,12 @@ class MafiosoAbility(TargetedNightAbility):
                 messages={intent.target: "You were attacked by a member of the Mafia!"}
             ))
         else:
-            if power > defense:
+            if power <= defense:
                 ctx.add_event(GameEvent(
                     event_type=GameEventType.ATTACK_BLOCKED,
                     actor=intent.actor,
                     target=intent.target,
-                    messages={intent.actor: "Your target's defense was too strong to kill.", intent.target: "Someone attacked you but your defense was too strong!"}
+                    messages={intent.actor: "Your target's defense was too strong to kill.", intent.target: "Someone attacked you but your defense was too strong!"} # TODO: Account for veteran edge case
                 ))
             else:
                 ctx.add_event(GameEvent(
