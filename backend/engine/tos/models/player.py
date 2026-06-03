@@ -22,6 +22,12 @@ class Player:
                 return True
         return False
 
+    def remove_status(self, status_type):
+        for status in self.status:
+            if status.is_type(status_type):
+                self.status.remove(status)
+                return
+
     def get_statuses(self, status_type):
         return [status for status in self.status if status.is_type(status_type)]
 

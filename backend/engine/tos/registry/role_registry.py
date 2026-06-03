@@ -6,7 +6,7 @@ from backend.engine.tos.roles.mafioso import MafiosoRole
 from backend.engine.tos.roles.sheriff import SheriffRole
 from backend.engine.tos.roles.tavern_keeper import TavernKeeperRole
 from backend.engine.tos.roles.veteran import VeteranRole
-
+from backend.engine.tos.roles.framer import FramerRole
 
 ROLE_REGISTRY = {
     "mafioso": MafiosoRole,
@@ -17,4 +17,5 @@ ROLE_REGISTRY = {
     "jailor": JailorRole,
     "lookout": LookoutRole,
     "veteran": VeteranRole,
+    "framer": FramerRole,
 }

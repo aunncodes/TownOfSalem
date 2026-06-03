@@ -10,3 +10,4 @@ class SubFaction(Enum):
     INVESTIGATIVE = auto()
     PROTECTIVE = auto()
     SUPPORT = auto()
+    DECEPTION = auto()

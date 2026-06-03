@@ -12,7 +12,7 @@ class SheriffAbility(TargetedNightAbility):
     def apply(self, state, intent, ctx):
         target = state.require_player(intent.target)
         suspicious = (Tag.DETECTION_IMMUNE not in target.role.tags) or target.has_status(StatusType.FRAMED) # Detection immune term is a bit vague, but simply all roles that should appear innocent are "Detection immune". Simply implemented like this to match the real game.
-
+        target.remove_status(StatusType.FRAMED) # attempt, if not present should fail silently
         ctx.add_event(GameEvent(
             event_type=GameEventType.SHERIFF_RESULT,
             actor=intent.actor,

@@ -9,7 +9,7 @@ class StatusType(Enum):
     WATCHED = auto()
 
 
-def expire_next_cleanup(state, data):
+def single_night_status(state, data):
     return True
 
 
@@ -18,7 +18,7 @@ class Status:
         self.type = status_type
         self.source = source
         self.data = data or {}
-        self.expiry = expiry or expire_next_cleanup
+        self.expiry = expiry or single_night_status
 
     def is_expired(self, state):
         return self.expiry(state, self.data)
