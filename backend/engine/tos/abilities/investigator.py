@@ -11,8 +11,10 @@ class InvestigatorAbility(TargetedNightAbility):
 
     def apply(self, state, intent, ctx: NightContext):
         target = state.require_player(intent.target)
-        result = target.role.data.investigator_result if not target.has_status(StatusType.FRAMED) else "Your target could be a Framer, Vampire, or Jester." # TODO: Probably shouldn't be hardcoded
-        target.remove_status(StatusType.FRAMED)  # attempt, if not present should fail silently
+        framed = target.get_statuses(StatusType.FRAMED)
+        result = target.role.data.investigator_result if len(framed) == 0 else "Your target could be a Framer, Vampire, or Jester." # TODO: Probably shouldn't be hardcoded
+        for status in framed:
+            status.data["checked"] = True # checks all framed events
         ctx.add_event(GameEvent(
             event_type=GameEventType.INVESTIGATION_RESULT,
             actor=intent.actor,

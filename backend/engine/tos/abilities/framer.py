@@ -4,7 +4,7 @@ from backend.engine.tos.enums.status import StatusType
 
 
 def framer_expired(state, data):
-    return False # TODO: Should be marked for deletion at the end of the night by sheriff and investigator to account for multiple checks
+    return data.get("checked")
 
 class FramerAbility(TargetedNightAbility):
     key = "frame"
@@ -12,4 +12,9 @@ class FramerAbility(TargetedNightAbility):
 
     def apply(self, state, intent, ctx: NightContext):
         target = state.require_player(intent.target)
-        target.add_status(StatusType.FRAMED, source=intent.actor, expiry=framer_expired)
+        target.add_status(
+            StatusType.FRAMED,
+            source=intent.actor,
+            data={"checked": False},
+            expiry=framer_expired,
+        )

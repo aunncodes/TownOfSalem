@@ -13,8 +13,6 @@ class Player:
 
     def add_status(self, status_type, source=None, data=None, expiry=None):
         status = Status(status_type, source, data, expiry)
-        if self.has_status(status_type): # Statuses need to be unique
-            return False
         self.status.append(status)
         return status
 
@@ -23,12 +21,6 @@ class Player:
             if status.is_type(status_type):
                 return True
         return False
-
-    def remove_status(self, status_type):
-        for status in self.status:
-            if status.is_type(status_type):
-                self.status.remove(status)
-                return
 
     def get_statuses(self, status_type):
         return [status for status in self.status if status.is_type(status_type)]
