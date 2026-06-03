@@ -13,6 +13,8 @@ class Player:
 
     def add_status(self, status_type, source=None, data=None, expiry=None):
         status = Status(status_type, source, data, expiry)
+        if self.has_status(status_type): # Statuses need to be unique
+            return False
         self.status.append(status)
         return status
 
