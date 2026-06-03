@@ -31,7 +31,7 @@ class RoleMechanicsTest(unittest.TestCase):
             return event
         self.fail("Missing event: " + event_type.name)
 
-    def test_mafioso_kills_target(self):
+    def test_mafioso(self):
         manager = self.make_game([
             (1, "Mafioso", "mafioso"),
             (2, "Sheriff", "sheriff"),
@@ -44,7 +44,7 @@ class RoleMechanicsTest(unittest.TestCase):
         self.assertIn(GameEventType.KILL, self.event_types(events))
         self.assertFalse(manager.require_state().require_player(2).alive)
 
-    def test_doctor_protects_target_from_mafioso(self):
+    def test_doctor(self):
         manager = self.make_game([
             (1, "Mafioso", "mafioso"),
             (2, "Doctor", "doctor"),
@@ -60,7 +60,7 @@ class RoleMechanicsTest(unittest.TestCase):
         self.assertIn(GameEventType.ATTACK_BLOCKED, self.event_types(events))
         self.assertTrue(manager.require_state().require_player(3).alive)
 
-    def test_tavern_keeper_roleblocks_mafioso(self):
+    def test_tavern_keeper(self):
         manager = self.make_game([
             (1, "Tavern Keeper", "tavernkeeper"),
             (2, "Mafioso", "mafioso"),
@@ -81,7 +81,7 @@ class RoleMechanicsTest(unittest.TestCase):
         manager.advance_phase()
         self.assertFalse(state.require_player(2).has_status(StatusType.ROLEBLOCKED))
 
-    def test_sheriff_finds_mafioso_suspicious(self):
+    def test_sheriff(self):
         manager = self.make_game([
             (1, "Sheriff", "sheriff"),
             (2, "Mafioso", "mafioso"),
@@ -94,7 +94,7 @@ class RoleMechanicsTest(unittest.TestCase):
         event = self.find_event(events, GameEventType.SHERIFF_RESULT, actor=1)
         self.assertIn("suspicious", event.messages[1])
 
-    def test_investigator_gets_role_result(self):
+    def test_investigator(self):
         manager = self.make_game([
             (1, "Investigator", "investigator"),
             (2, "Doctor", "doctor"),
@@ -108,7 +108,7 @@ class RoleMechanicsTest(unittest.TestCase):
         event = self.find_event(events, GameEventType.INVESTIGATION_RESULT, actor=1)
         self.assertEqual(event.messages[1], state.require_player(2).role.data.investigator_result)
 
-    def test_jailor_selects_and_executes_jailed_target(self):
+    def test_jailor(self):
         manager = self.make_game([
             (1, "Jailor", "jailor"),
             (2, "Mafioso", "mafioso"),
@@ -128,7 +128,7 @@ class RoleMechanicsTest(unittest.TestCase):
         self.assertIn(GameEventType.KILL, self.event_types(night_events))
         self.assertFalse(state.require_player(2).alive)
 
-    def test_veteran_alert_shoots_visitor(self):
+    def test_veteran(self):
         manager = self.make_game([
             (1, "Veteran", "veteran"),
             (2, "Mafioso", "mafioso"),
@@ -148,7 +148,7 @@ class RoleMechanicsTest(unittest.TestCase):
         manager.advance_phase()
         self.assertFalse(state.require_player(1).has_status(StatusType.ALERT))
 
-    def test_lookout_sees_visitor(self):
+    def test_lookout(self):
         manager = self.make_game([
             (1, "Lookout", "lookout"),
             (2, "Mafioso", "mafioso"),
@@ -164,7 +164,7 @@ class RoleMechanicsTest(unittest.TestCase):
         self.assertEqual(event.target, 3)
         self.assertIn("Mafioso", event.messages[1])
 
-    def test_framer_frame_affects_multiple_checks_before_expiring(self):
+    def test_framer(self):
         manager = self.make_game([
             (1, "Framer", "framer"),
             (2, "Sheriff", "sheriff"),
