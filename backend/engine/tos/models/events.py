@@ -5,7 +5,7 @@ class GameState:
     def __init__(self, phase, players: dict[int, Player]):
         self.phase = phase
         self.players = dict(players)
-
+        self.day = 1
         self.queued = []
 
     def require_player(self, pid) -> Player:

@@ -1,6 +1,6 @@
 from backend.engine.tos.enums.game_event import GameEventType
 from backend.engine.tos.enums.phase import Phase
-from backend.engine.tos.enums.status import Status
+from backend.engine.tos.enums.status import StatusType
 from backend.engine.tos.enums.tag import Tag
 from backend.engine.tos.models.action_intent import ActionIntent
 from backend.engine.tos.models.day_context import DayContext
@@ -58,10 +58,12 @@ class NightAbility(Ability):
         if self.requires_living_actor and not state.is_alive(intent.actor):
             return
 
-        if Status.JAILED in state.require_player(intent.actor).status:
+        actor = state.require_player(intent.actor)
+
+        if actor.has_status(StatusType.JAILED):
             return
 
-        if Status.ROLEBLOCKED in state.require_player(intent.actor).status:
+        if actor.has_status(StatusType.ROLEBLOCKED):
             return
 
         if self.requires_living_target:
@@ -70,7 +72,7 @@ class NightAbility(Ability):
             if not state.is_alive(intent.target):
                 return
 
-        if intent.target is not None and Status.JAILED in state.require_player(intent.target).status and Tag.JAILED_IMMUNE not in state.require_player(intent.actor).role.tags: # TODO: Fix not checking if this is the correlating Jailor
+        if intent.target is not None and state.require_player(intent.target).has_status(StatusType.JAILED) and Tag.JAILED_IMMUNE not in actor.role.tags: # TODO: Fix not checking if this is the correlating Jailor
             ctx.add_event(GameEvent(
                 event_type=GameEventType.TARGET_JAILED,
                 actor=intent.actor,
@@ -79,7 +81,7 @@ class NightAbility(Ability):
             ))
             return
 
-        if intent.target is not None and Status.ALERT in state.require_player(intent.target).status:
+        if intent.target is not None and state.require_player(intent.target).has_status(StatusType.ALERT):
             ctx.add_event(GameEvent(
                 event_type=GameEventType.VETERAN_SHOT,
                 actor=intent.target,

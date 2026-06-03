@@ -11,3 +11,5 @@ class GameEventType(Enum):
     TARGET_PROTECTED = auto()
     VETERAN_ALERTED = auto()
     VETERAN_SHOT = auto()
+    LOOKOUT_WATCH = auto()
+    LOOKOUT_SAW = auto()

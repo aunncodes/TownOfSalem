@@ -1,6 +1,6 @@
 from backend.engine.tos.core.resolver import Resolver
 from backend.engine.tos.enums.phase import Phase
-from backend.engine.tos.enums.status import Status
+from backend.engine.tos.enums.status import StatusType
 from backend.engine.tos.models.action import ActionChoice
 from backend.engine.tos.models.events import GameState
 from backend.engine.tos.models.player import Player
@@ -60,7 +60,7 @@ class GameManager:
         for ability in player.role.abilities:
             if ability.phase != state.phase:
                 continue
-            if Status.JAILED in player.status: # TODO: Add Logic for roles that can use their ability when jailed, some sort of passive ability type maybe?
+            if player.has_status(StatusType.JAILED): # TODO: Add Logic for roles that can use their ability when jailed, some sort of passive ability type maybe?
                 continue
             # TODO: implement function for abilities so that they can themselves check if they are valid to run in the current state, to solve above
 
@@ -105,10 +105,10 @@ class GameManager:
     def advance_phase(self):
         state = self.require_state()
         state.clear_queue()
-        if state.phase == Phase.NIGHT: # Currently just clear all statuses when night ends, might need to be changed so all statuses have set times, such as framed
-            players = self.get_alive_players()
-            for player in players.values():
-                player.status = set()
+        if state.phase == Phase.NIGHT:
+            for player in state.players.values():
+                player.remove_expired_statuses(state)
+            state.day += 1
 
         state.phase = Phase.DAY if state.phase == Phase.NIGHT else Phase.NIGHT
 
